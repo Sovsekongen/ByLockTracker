@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">GPS Tracker</string>
+
+    <string name="control_name">Control</string>
+    <string name="map_name">Map</string>
+    <string name="settings_name">Settings</string>
+
+    <string name="title_activity_maps">Map with Marker</string>
+</resources>

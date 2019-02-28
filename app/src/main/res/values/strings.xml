@@ -6,4 +6,9 @@
     <string name="settings_name">Settings</string>
 
     <string name="title_activity_maps">Map with Marker</string>
+    <string name="tracker_ownerName">Owner</string>
+    <string name="tracker_battery">Battery Percentage</string>
+    <string name="longitude">Longitude</string>
+    <string name="latitude">Latitude</string>
+
 </resources>

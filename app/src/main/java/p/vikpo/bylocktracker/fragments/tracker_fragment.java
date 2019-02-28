@@ -4,32 +4,29 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import java.util.ArrayList;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.ListFragment;
+import androidx.fragment.app.Fragment;
 import p.vikpo.bylocktracker.R;
 import p.vikpo.bylocktracker.helpers.Tracker;
-import p.vikpo.bylocktracker.helpers.TrackerAdapter;
 
-public class list_fragment extends ListFragment
+public class tracker_fragment extends Fragment
 {
-    private ArrayAdapter<Tracker> listAdapter;
-    private ArrayList<Tracker> trackers = new ArrayList<>();
 
-    public static list_fragment newInstance()
+    private TextView longEdit, latEdit, batPerEdit, ownerNameEdit;
+
+    public static tracker_fragment newInstance()
     {
-        return new list_fragment();
+        return new tracker_fragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstance)
     {
         super.onCreate(savedInstance);
+
     }
 
     @Override
@@ -54,7 +51,12 @@ public class list_fragment extends ListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View v = inflater.inflate(R.layout.fragment_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_tracker, container, false);
+
+        longEdit = v.findViewById(R.id.longEdit);
+        latEdit = v.findViewById(R.id.latEdit);
+        batPerEdit = v.findViewById(R.id.batPerEdit);
+        ownerNameEdit = v.findViewById(R.id.ownerNameEdit);
 
         return v;
     }
@@ -64,11 +66,14 @@ public class list_fragment extends ListFragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        Tracker tracker = new Tracker();
-        trackers.add(tracker);
+    }
 
-        listAdapter = new TrackerAdapter(getContext(), trackers);
 
-        getListView().setAdapter(listAdapter);
+    public void addItem(Tracker trackedItem)
+    {
+        longEdit.setText(Double.toString(trackedItem.getLongitude()));
+        latEdit.setText(Double.toString(trackedItem.getLatitude()));
+        batPerEdit.setText(Double.toString(trackedItem.getBatteryPer()));
+        ownerNameEdit.setText(trackedItem.getBikeOwner());
     }
 }

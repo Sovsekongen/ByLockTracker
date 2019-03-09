@@ -18,7 +18,6 @@ public class Tracker
         id = UUID.randomUUID();
     }
 
-
     public Tracker(double lat, double longt, double bat, String bikeOwner, String colour)
     {
         this.latitude = lat;

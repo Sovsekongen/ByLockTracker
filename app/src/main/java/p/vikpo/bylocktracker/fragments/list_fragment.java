@@ -70,7 +70,7 @@ public class list_fragment extends ListFragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        Tracker tracker = new Tracker(), tracker1 = new Tracker(55.391995, 10.406443, 100, "Marcus pa Cour", "#D81B60");
+        Tracker tracker = new Tracker(), tracker1 = new Tracker(55.391918, 10.406703, 100, "Marcus pa Cour", "#D81B60");
         trackers.add(tracker);
         trackers.add(tracker1);
 

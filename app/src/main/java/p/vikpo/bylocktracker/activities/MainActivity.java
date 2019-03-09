@@ -1,5 +1,11 @@
 package p.vikpo.bylocktracker.activities;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -8,15 +14,8 @@ import p.vikpo.bylocktracker.fragments.list_fragment;
 import p.vikpo.bylocktracker.fragments.map_fragment;
 import p.vikpo.bylocktracker.fragments.settings_fragment;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 public class MainActivity extends FragmentActivity
 {
-
     private BottomNavigationView botNavView;
 
     @Override

@@ -10,10 +10,9 @@
     <FrameLayout
         android:id="@+id/fragmentLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="532dp"
         android:animateLayoutChanges="true"
-        android:visibility="visible">
-    </FrameLayout>
+        android:visibility="visible"></FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationMenu"

@@ -8,6 +8,8 @@ import p.vikpo.bylocktracker.fragments.list_fragment;
 import p.vikpo.bylocktracker.fragments.map_fragment;
 import p.vikpo.bylocktracker.fragments.settings_fragment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -51,5 +53,17 @@ public class MainActivity extends FragmentActivity
         fragmentTransaction.commit();
 
         botNavView.getMenu().getItem(1).setChecked(true);
+
+        checkPermission();
+    }
+
+
+    private void checkPermission()
+    {
+        if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET}, 10);
+        }
     }
 }

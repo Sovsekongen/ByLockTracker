@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.ListFragment;
 import p.vikpo.bylocktracker.R;
 import p.vikpo.bylocktracker.helpers.Tracker;
@@ -23,6 +26,8 @@ import p.vikpo.bylocktracker.helpers.TrackerAdapter;
 
 public class list_fragment extends ListFragment
 {
+
+    private FloatingActionButton fab;
     private ArrayAdapter<Tracker> listAdapter;
     private ArrayList<Tracker> trackers = new ArrayList<>();
     private Geocoder geoCoder;
@@ -61,6 +66,18 @@ public class list_fragment extends ListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
+        fab = v.findViewById(R.id.floatingActionButton);
+
+        fab.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragmentLayout, map_fragment.newInstance());
+                fragmentTransaction.commit();
+            }
+        });
 
         return v;
     }

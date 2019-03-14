@@ -95,7 +95,6 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
         lng = new LatLng(0, 0);
         bounds = new LatLngBounds(lat, lng);
 
-
         mapView = (MapView) v.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();

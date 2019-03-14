@@ -2,6 +2,11 @@ package p.vikpo.bylocktracker.fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.XmlResourceParser;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -24,9 +29,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 
 public class map_fragment extends Fragment implements OnMapReadyCallback
 {
@@ -82,13 +95,13 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
         lng = new LatLng(0, 0);
         bounds = new LatLngBounds(lat, lng);
 
-
         mapView = (MapView) v.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_directions_bike_black_24dp);
 
-        locationManager = (LocationManager) getActivity().getSystemService( getContext().LOCATION_SERVICE);
+        locationManager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
         // Define a listener that responds to location updates
         locationListener = new LocationListener()
@@ -105,7 +118,19 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
                 }
 
                 LatLng sydney = new LatLng(latitude, longitude);
-                googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in ODENSE BABY"));
+                if(bitmap != null)
+                {
+                    googleMap.addMarker(new MarkerOptions().position(sydney)
+                            .title("Marker in ODENSE BABY")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                }
+                else
+                {
+                    googleMap.addMarker(new MarkerOptions().position(sydney)
+                            .title("Marker in ODENSE BABY")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.android_bike)));
+                }
+
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
                 isLocationUpdated = true;
@@ -151,8 +176,10 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
         googleMap = map;
 
         //googleMap.setLatLngBoundsForCameraTarget(bounds);
-        googleMap.setMinZoomPreference(5.0f);
-        googleMap.setMaxZoomPreference(14.0f);
+        googleMap.setMinZoomPreference(6.0f);
+        googleMap.setMaxZoomPreference(16.0f);
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(55.371326, 10.427586), 12.0f));
         getLocation();
     }
 

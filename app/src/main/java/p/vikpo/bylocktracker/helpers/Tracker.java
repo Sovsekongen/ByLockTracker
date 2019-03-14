@@ -5,7 +5,7 @@ import java.util.UUID;
 public class Tracker
 {
     private double latitude, longitude, batteryPer;
-    private String bikeOwner, colour;
+    private String bikeOwner, colour, address;
     private UUID id;
 
     public Tracker()
@@ -18,13 +18,13 @@ public class Tracker
         id = UUID.randomUUID();
     }
 
-
-    public Tracker(double lat, double longt, double bat, String bikeOwner)
+    public Tracker(double lat, double longt, double bat, String bikeOwner, String colour)
     {
         this.latitude = lat;
         this.longitude = longt;
         this.batteryPer = bat;
         this.bikeOwner = bikeOwner;
+        this.colour = colour;
         id = UUID.randomUUID();
     }
 
@@ -78,9 +78,29 @@ public class Tracker
         this.id = id;
     }
 
+    public String getColour()
+    {
+        return colour;
+    }
+
+    public void setColour(String colour)
+    {
+        this.colour = colour;
+    }
+
     @Override
     public String toString()
     {
         return getBikeOwner();
+    }
+
+    public String getAddress()
+    {
+        return address;
+    }
+
+    public void setAddress(String address)
+    {
+        this.address = address;
     }
 }

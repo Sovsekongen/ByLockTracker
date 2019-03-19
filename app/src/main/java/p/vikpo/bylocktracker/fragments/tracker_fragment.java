@@ -71,8 +71,8 @@ public class tracker_fragment extends Fragment
 
     public void addItem(Tracker trackedItem)
     {
-        longEdit.setText(Double.toString(trackedItem.getLongitude()));
-        latEdit.setText(Double.toString(trackedItem.getLatitude()));
+        longEdit.setText(Double.toString(trackedItem.getLatLng().longitude));
+        latEdit.setText(Double.toString(trackedItem.getLatLng().latitude));
         batPerEdit.setText(Double.toString(trackedItem.getBatteryPer()));
         ownerNameEdit.setText(trackedItem.getBikeOwner());
     }

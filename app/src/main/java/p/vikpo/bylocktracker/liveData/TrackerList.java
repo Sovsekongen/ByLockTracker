@@ -42,10 +42,14 @@ public class TrackerList extends ViewModel
             if(trackerPrefList == null)
             {
                 trackerPrefList = gson.fromJson(sharedPref.getString("tracker", ""), colType);
+                if(trackerPrefList == null)
+                {
+                    trackerPrefList = new ArrayList<>();
+                }
                 Log.e("byLock", Integer.toString(trackerPrefList.size()));
             }
             trackerList.setValue(trackerPrefList);
-        },2000);
+        },200);
     }
 
     public void addTracker(Tracker tracker, SharedPreferences sharedPref)

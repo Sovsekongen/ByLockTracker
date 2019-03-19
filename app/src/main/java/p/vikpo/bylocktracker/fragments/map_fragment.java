@@ -48,16 +48,11 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
         return new map_fragment();
     }
 
-
-    private final String PROVIDER = LocationManager.GPS_PROVIDER;
-    private boolean isLocationUpdated;
     private GoogleMap googleMap;
     private LatLngBounds bounds;
     private LatLng lat, lng;
     private MapView mapView;
     private double longitude, latitude;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
 
     @Override
     public void onCreate(Bundle savedInstance)
@@ -69,7 +64,6 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
     public void onResume()
     {
         super.onResume();
-        isLocationUpdated = false;
     }
 
     @Override
@@ -99,68 +93,13 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_directions_bike_black_24dp);
 
-        locationManager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
-
-        // Define a listener that responds to location updates
-        locationListener = new LocationListener()
-        {
-            public void onLocationChanged(Location location)
-            {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-
-                String stats = "Latitude: " + Double.toString(latitude) + " Longitude: " + Double.toString(longitude);
-                if(getContext() != null)
-                {
-                    Toast.makeText(getContext(), stats, Toast.LENGTH_SHORT).show();
-                }
-
-                LatLng sydney = new LatLng(latitude, longitude);
-                if(bitmap != null)
-                {
-                    googleMap.addMarker(new MarkerOptions().position(sydney)
-                            .title("Marker in ODENSE BABY")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                }
-                else
-                {
-                    googleMap.addMarker(new MarkerOptions().position(sydney)
-                            .title("Marker in ODENSE BABY")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.android_bike)));
-                }
-
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-                isLocationUpdated = true;
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras)
-            {
-
-            }
-
-            public void onProviderEnabled(String provider)
-            {
-
-            }
-
-            public void onProviderDisabled(String provider)
-            {
-
-            }
-        };
-
-        if(isLocationUpdated)
-        {
-            locationManager.removeUpdates(locationListener);
-        }
-        else
-        {
-            checkPermission();
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        }
+        LatLng sydney = new LatLng(latitude, longitude);
+        /*
+        googleMap.addMarker(new MarkerOptions().position(sydney)
+                .title("Marker in ODENSE BABY")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.android_bike)));
+                */
         return v;
     }
 
@@ -180,22 +119,5 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
         googleMap.setMaxZoomPreference(16.0f);
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(55.371326, 10.427586), 12.0f));
-        getLocation();
-    }
-
-    private void checkPermission()
-    {
-        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET}, 10);
-        }
-    }
-
-
-    private void getLocation()
-    {
-        checkPermission();
-        locationManager.requestLocationUpdates(PROVIDER, 5000, 0, locationListener);
     }
 }

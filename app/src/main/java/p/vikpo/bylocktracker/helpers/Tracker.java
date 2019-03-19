@@ -1,17 +1,19 @@
 package p.vikpo.bylocktracker.helpers;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.UUID;
 
 public class Tracker
 {
-    private double latitude, longitude, batteryPer;
+    private LatLng latLng;
+    private double batteryPer;
     private String bikeOwner, colour, address;
     private UUID id;
 
     public Tracker()
     {
-        latitude = 55.367913;
-        longitude = 10.428155;
+        latLng = new LatLng(55.367913, 10.428155);
         batteryPer = 100;
         bikeOwner = "Owner Ownersen";
         colour = "#48696b";
@@ -20,32 +22,29 @@ public class Tracker
 
     public Tracker(double lat, double longt, double bat, String bikeOwner, String colour)
     {
-        this.latitude = lat;
-        this.longitude = longt;
+        this.latLng = new LatLng(lat, longt);
         this.batteryPer = bat;
         this.bikeOwner = bikeOwner;
         this.colour = colour;
         id = UUID.randomUUID();
     }
 
-    public double getLatitude()
+    public Tracker(LatLng latLng, String bikeOwner, String colour)
     {
-        return latitude;
+        this.latLng = latLng;
+        this.bikeOwner = bikeOwner;
+        this.colour = colour;
+        id = UUID.randomUUID();
     }
 
-    public void setLatitude(double latitude)
+    public LatLng getLatLng()
     {
-        this.latitude = latitude;
+        return latLng;
     }
 
-    public double getLongitude()
+    public void setLatLng(LatLng latLng)
     {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude)
-    {
-        this.longitude = longitude;
+        this.latLng = latLng;
     }
 
     public double getBatteryPer()

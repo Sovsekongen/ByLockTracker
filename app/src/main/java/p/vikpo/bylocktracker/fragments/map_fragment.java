@@ -1,45 +1,30 @@
 package p.vikpo.bylocktracker.fragments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.content.res.XmlResourceParser;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import p.vikpo.bylocktracker.R;
-
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.xmlpull.v1.XmlPullParserException;
+import java.util.ArrayList;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import p.vikpo.bylocktracker.R;
+import p.vikpo.bylocktracker.helpers.Tracker;
+import p.vikpo.bylocktracker.liveData.TrackerList;
 
 public class map_fragment extends Fragment implements OnMapReadyCallback
 {
@@ -49,10 +34,8 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
     }
 
     private GoogleMap googleMap;
-    private LatLngBounds bounds;
-    private LatLng lat, lng;
-    private MapView mapView;
-    private double longitude, latitude;
+    private SharedPreferences sharedPref;
+    private TrackerList trackerList;
 
     @Override
     public void onCreate(Bundle savedInstance)
@@ -80,26 +63,15 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-
-        lat = new LatLng(0, 0);
-        lng = new LatLng(0, 0);
-        bounds = new LatLngBounds(lat, lng);
-
-        mapView = (MapView) v.findViewById(R.id.map);
+        MapView mapView = v.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
 
-        LatLng sydney = new LatLng(latitude, longitude);
-        /*
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in ODENSE BABY")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.android_bike)));
-                */
         return v;
     }
 
@@ -114,10 +86,27 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
     {
         googleMap = map;
 
-        //googleMap.setLatLngBoundsForCameraTarget(bounds);
         googleMap.setMinZoomPreference(6.0f);
-        googleMap.setMaxZoomPreference(16.0f);
+        googleMap.setMaxZoomPreference(20.0f);
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(55.371326, 10.427586), 12.0f));
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        trackerList  = ViewModelProviders.of(this).get(TrackerList.class);
+
+        final Observer<ArrayList<Tracker>> trackerObserver = trackers ->
+        {
+            ArrayList<Tracker> mapTrackerList = trackerList.getTrackerList(sharedPref).getValue();
+            if(mapTrackerList != null)
+            {
+                for(Tracker s : mapTrackerList)
+                {
+                    googleMap.addMarker(new MarkerOptions().position(s.getLatLng()).title(s.getBikeOwner()).icon(BitmapDescriptorFactory.defaultMarker()));
+                }
+            }
+        };
+
+        trackerList.getTrackerList(sharedPref).observe(this, trackerObserver);
     }
 }

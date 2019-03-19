@@ -89,7 +89,7 @@ public class list_fragment extends ListFragment
         fab.setOnClickListener(v1 ->
         {
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragmentLayout, map_fragment.newInstance());
+            fragmentTransaction.replace(R.id.fragmentLayout, addBike_fragment.newInstance());
             fragmentTransaction.commit();
         });
 

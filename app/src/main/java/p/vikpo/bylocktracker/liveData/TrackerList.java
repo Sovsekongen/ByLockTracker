@@ -103,6 +103,10 @@ public class TrackerList extends ViewModel
                 String address = addresses.get(0).getAddressLine(0);
                 s.setAddress(address);
             }
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("tracker", gson.toJson(trackerPrefList));
+            editor.apply();
         }
         else
         {

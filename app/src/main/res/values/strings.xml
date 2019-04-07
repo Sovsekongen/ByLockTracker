@@ -4,11 +4,18 @@
     <string name="control_name">Control</string>
     <string name="map_name">Map</string>
     <string name="settings_name">Settings</string>
-
+    <string name="edit_bike_name">Cykelnavn</string>
+    <string name="device_id">Tracker ID</string>
+    <string name="add_device">Tilføj cykel</string>
     <string name="title_activity_maps">Map with Marker</string>
     <string name="tracker_ownerName">Owner</string>
     <string name="tracker_battery">Battery Percentage</string>
     <string name="longitude">Longitude</string>
     <string name="latitude">Latitude</string>
+    <string name="add_bike_title">Tilføj cykel</string>
 
+    <string name="save_string">Save</string>
+    <string name="route_to">Route To</string>
+
+    <string name="back_button">Back</string>
 </resources>

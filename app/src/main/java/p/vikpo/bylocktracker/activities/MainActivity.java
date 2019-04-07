@@ -1,5 +1,12 @@
 package p.vikpo.bylocktracker.activities;
 
+import android.Manifest;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -8,26 +15,19 @@ import p.vikpo.bylocktracker.fragments.list_fragment;
 import p.vikpo.bylocktracker.fragments.map_fragment;
 import p.vikpo.bylocktracker.fragments.settings_fragment;
 
-import android.os.Bundle;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 public class MainActivity extends FragmentActivity
 {
-
-    private BottomNavigationView botNavView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        botNavView = findViewById(R.id.bottomNavigationMenu);
+        BottomNavigationView botNavView = findViewById(R.id.bottomNavigationMenu);
 
         botNavView.setOnNavigationItemSelectedListener(item ->
         {
-            Fragment frag = null;
+            Fragment frag;
             switch (item.getItemId())
             {
                 case R.id.map_bottom_menu:
@@ -39,6 +39,8 @@ public class MainActivity extends FragmentActivity
                 case R.id.settings_bottom_menu:
                     frag = settings_fragment.newInstance();
                     break;
+                default:
+                    frag = map_fragment.newInstance();
             }
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragmentLayout, frag);

@@ -1,51 +1,66 @@
 package p.vikpo.bylocktracker.helpers;
 
+import android.graphics.drawable.Drawable;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.UUID;
+
+import p.vikpo.bylocktracker.R;
 
 public class Tracker
 {
-    private double latitude, longitude, batteryPer;
-    private String bikeOwner, colour;
+    private LatLng latLng;
+    private double batteryPer;
+    private int iconId;
+    private String bikeOwner, colour, address;
     private UUID id;
 
     public Tracker()
     {
-        latitude = 55.367913;
-        longitude = 10.428155;
+        latLng = new LatLng(55.367913, 10.428155);
         batteryPer = 100;
         bikeOwner = "Owner Ownersen";
         colour = "#48696b";
         id = UUID.randomUUID();
+        iconId = R.drawable.android_bike;
     }
 
-
-    public Tracker(double lat, double longt, double bat, String bikeOwner)
+    public Tracker(double lat, double longt, double bat, String bikeOwner, String colour)
     {
-        this.latitude = lat;
-        this.longitude = longt;
+        this.latLng = new LatLng(lat, longt);
         this.batteryPer = bat;
         this.bikeOwner = bikeOwner;
+        this.colour = colour;
         id = UUID.randomUUID();
     }
 
-    public double getLatitude()
+    public Tracker(LatLng latLng, String bikeOwner, String colour)
     {
-        return latitude;
+        this.latLng = latLng;
+        this.bikeOwner = bikeOwner;
+        this.colour = colour;
+        id = UUID.randomUUID();
     }
 
-    public void setLatitude(double latitude)
+    public int getIconSource()
     {
-        this.latitude = latitude;
+        return iconId;
     }
 
-    public double getLongitude()
+    public void setIconSource(int iconSource)
     {
-        return longitude;
+        this.iconId = iconSource;
     }
 
-    public void setLongitude(double longitude)
+    public LatLng getLatLng()
     {
-        this.longitude = longitude;
+        return latLng;
+    }
+
+    public void setLatLng(LatLng latLng)
+    {
+        this.latLng = latLng;
     }
 
     public double getBatteryPer()
@@ -78,9 +93,29 @@ public class Tracker
         this.id = id;
     }
 
+    public String getColour()
+    {
+        return colour;
+    }
+
+    public void setColour(String colour)
+    {
+        this.colour = colour;
+    }
+
     @Override
     public String toString()
     {
         return getBikeOwner();
+    }
+
+    public String getAddress()
+    {
+        return address;
+    }
+
+    public void setAddress(String address)
+    {
+        this.address = address;
     }
 }

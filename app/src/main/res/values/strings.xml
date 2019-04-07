@@ -14,4 +14,8 @@
     <string name="latitude">Latitude</string>
     <string name="add_bike_title">Tilføj cykel</string>
 
+    <string name="save_string">Save</string>
+    <string name="route_to">Route To</string>
+
+    <string name="back_button">Back</string>
 </resources>

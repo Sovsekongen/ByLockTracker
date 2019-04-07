@@ -50,7 +50,6 @@ public class TrackerList extends ViewModel
                 {
                     trackerPrefList = new ArrayList<>();
                 }
-                Log.e("byLock", Integer.toString(trackerPrefList.size()));
             }
             trackerList.setValue(trackerPrefList);
         },200);
@@ -103,6 +102,10 @@ public class TrackerList extends ViewModel
                 String address = addresses.get(0).getAddressLine(0);
                 s.setAddress(address);
             }
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("tracker", gson.toJson(trackerPrefList));
+            editor.apply();
         }
         else
         {

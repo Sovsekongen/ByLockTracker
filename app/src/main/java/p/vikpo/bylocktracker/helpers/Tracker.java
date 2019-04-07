@@ -1,13 +1,18 @@
 package p.vikpo.bylocktracker.helpers;
 
+import android.graphics.drawable.Drawable;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.UUID;
+
+import p.vikpo.bylocktracker.R;
 
 public class Tracker
 {
     private LatLng latLng;
     private double batteryPer;
+    private int iconId;
     private String bikeOwner, colour, address;
     private UUID id;
 
@@ -18,6 +23,7 @@ public class Tracker
         bikeOwner = "Owner Ownersen";
         colour = "#48696b";
         id = UUID.randomUUID();
+        iconId = R.drawable.android_bike;
     }
 
     public Tracker(double lat, double longt, double bat, String bikeOwner, String colour)
@@ -35,6 +41,16 @@ public class Tracker
         this.bikeOwner = bikeOwner;
         this.colour = colour;
         id = UUID.randomUUID();
+    }
+
+    public int getIconSource()
+    {
+        return iconId;
+    }
+
+    public void setIconSource(int iconSource)
+    {
+        this.iconId = iconSource;
     }
 
     public LatLng getLatLng()

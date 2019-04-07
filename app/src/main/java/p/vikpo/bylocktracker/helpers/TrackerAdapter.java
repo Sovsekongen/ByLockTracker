@@ -13,12 +13,14 @@ import android.widget.TextView;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import p.vikpo.bylocktracker.R;
 
 public class TrackerAdapter extends ArrayAdapter<Tracker>
 {
     private ViewHolder viewHolder;
     private ColorFilter cf;
+    private Context context;
 
     private static class ViewHolder
     {
@@ -30,6 +32,7 @@ public class TrackerAdapter extends ArrayAdapter<Tracker>
     public TrackerAdapter(@NonNull Context context, @NonNull List<Tracker> objects)
     {
         super(context, 0, objects);
+        this.context = context;
     }
 
     public View getView(int pos, View convertView, ViewGroup parent)
@@ -55,6 +58,7 @@ public class TrackerAdapter extends ArrayAdapter<Tracker>
         {
             viewHolder.ownerName.setText(String.format("%s", item.getBikeOwner()));
             viewHolder.addressView.setText(String.format("%s", item.getAddress()));
+            viewHolder.emblem.setImageDrawable(AppCompatResources.getDrawable(context, item.getIconSource() ));
             if(item.getColour() != null)
             {
                 int col = Color.parseColor(item.getColour());

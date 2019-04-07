@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -97,5 +98,16 @@ public class list_fragment extends ListFragment
         super.onViewCreated(view, savedInstanceState);
 
         geoCoder = new Geocoder(getContext(), Locale.getDefault());
+
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                FragmentTransaction fragmentTransaction = list_fragment.this.getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragmentLayout, edit_bike_fragment.newInstance((int) id));
+                fragmentTransaction.commit();
+            }
+        });
     }
 }

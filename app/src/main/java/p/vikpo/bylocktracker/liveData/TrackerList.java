@@ -50,7 +50,6 @@ public class TrackerList extends ViewModel
                 {
                     trackerPrefList = new ArrayList<>();
                 }
-                Log.e("byLock", Integer.toString(trackerPrefList.size()));
             }
             trackerList.setValue(trackerPrefList);
         },200);

@@ -1,6 +1,7 @@
 package p.vikpo.bylocktracker.fragments;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -26,11 +27,11 @@ import p.vikpo.bylocktracker.R;
 import p.vikpo.bylocktracker.helpers.Tracker;
 import p.vikpo.bylocktracker.liveData.TrackerList;
 
-public class map_fragment extends Fragment implements OnMapReadyCallback
+public class FragmentMap extends Fragment implements OnMapReadyCallback
 {
-    public static map_fragment newInstance()
+    public static FragmentMap newInstance()
     {
-        return new map_fragment();
+        return new FragmentMap();
     }
 
     private GoogleMap googleMap;
@@ -102,7 +103,7 @@ public class map_fragment extends Fragment implements OnMapReadyCallback
             {
                 for(Tracker s : mapTrackerList)
                 {
-                    googleMap.addMarker(new MarkerOptions().position(s.getLatLng()).title(s.getBikeOwner()).icon(BitmapDescriptorFactory.defaultMarker()));
+                    googleMap.addMarker(new MarkerOptions().position(s.getLatLng()).title(s.getBikeOwner()).icon(BitmapDescriptorFactory.defaultMarker(Color.parseColor(s.getColour()))));
                 }
             }
         };

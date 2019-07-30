@@ -58,7 +58,11 @@ public class TrackerAdapter extends ArrayAdapter<Tracker>
         {
             viewHolder.ownerName.setText(String.format("%s", item.getBikeOwner()));
             viewHolder.addressView.setText(String.format("%s", item.getAddress()));
-            viewHolder.emblem.setImageDrawable(AppCompatResources.getDrawable(context, item.getIconSource() ));
+            if(item.getIconSource() != 0)
+            {
+                viewHolder.emblem.setImageDrawable(AppCompatResources.getDrawable(context, item.getIconSource()));
+            }
+
             if(item.getColour() != null)
             {
                 int col = Color.parseColor(item.getColour());

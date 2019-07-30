@@ -55,27 +55,55 @@ public class TrackerList extends ViewModel
         },200);
     }
 
-    public void addTracker(Tracker tracker, SharedPreferences sharedPref)
+    public boolean addTracker(Tracker tracker, SharedPreferences sharedPref)
+    {
+        boolean success;
+        checkTrackerList(sharedPref);
+        trackerPrefList.add(tracker);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString("tracker", gson.toJson(trackerPrefList));
+        success = editor.commit();
+
+        return success;
+    }
+
+    public boolean editTracker(Tracker tracker, Tracker targetTracker, SharedPreferences sharedPref)
+    {
+        boolean success;
+        checkTrackerList(sharedPref);
+
+        for (Tracker t : trackerPrefList)
+        {
+            if(t == tracker)
+            {
+                t.setColour(targetTracker.getColour());
+                t.setBikeOwner(targetTracker.getBikeOwner());
+                t.setIconSource(targetTracker.getIconSource());
+            }
+        }
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("tracker", gson.toJson(trackerPrefList));
+        success = editor.commit();
+
+        return success;
+    }
+
+    private void checkTrackerList(SharedPreferences sharedPref)
     {
         if(trackerList == null)
         {
             getTrackerList(sharedPref);
         }
 
-        if(trackerPrefList == null )
+        if(trackerPrefList == null)
         {
             if((trackerPrefList = gson.fromJson(sharedPref.getString("tracker", ""), colType)) == null)
             {
                 trackerPrefList = new ArrayList<>();
             }
         }
-
-        trackerPrefList.add(tracker);
-
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        editor.putString("tracker", gson.toJson(trackerPrefList));
-        editor.apply();
     }
 
     public void updateAddresses(Geocoder geoCoder, SharedPreferences sharedPref)
@@ -107,11 +135,5 @@ public class TrackerList extends ViewModel
             editor.putString("tracker", gson.toJson(trackerPrefList));
             editor.apply();
         }
-        else
-        {
-            Log.e("byLock", "Du sutter Viktor");
-        }
-
-
     }
 }

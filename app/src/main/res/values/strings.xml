@@ -4,18 +4,44 @@
     <string name="control_name">Control</string>
     <string name="map_name">Map</string>
     <string name="settings_name">Settings</string>
-    <string name="edit_bike_name">Cykelnavn</string>
-    <string name="device_id">Tracker ID</string>
-    <string name="add_device">Tilføj cykel</string>
+
+
     <string name="title_activity_maps">Map with Marker</string>
     <string name="tracker_ownerName">Owner</string>
     <string name="tracker_battery">Battery Percentage</string>
     <string name="longitude">Longitude</string>
     <string name="latitude">Latitude</string>
+
+    <string name="ls_login">Login</string>
+    <string name="ls_noAccount">No account yet? Create one</string>
+    <string name="ls_password">Password</string>
+    <string name="ls_email">E-Mail</string>
+    <string name="ls_picDesc">Logo</string>
+
+    <string name="su_account">Already a member? Login</string>
+    <string name="su_name">Name</string>
+    <string name="su_signup">Sign Up</string>
+
     <string name="add_bike_title">Tilføj cykel</string>
+    <string name="add_bike_name">Cykelnavn</string>
+    <string name="add_bike_device_id">Tracker ID</string>
+    <string name="add_bike_device">Tilføj cykel</string>
+    <string name="add_bike_colour">Colour</string>
+    <string name="add_bike_icon">Icon</string>
+    <string name="add_bike_pick_colour">Pick Colour</string>
 
-    <string name="save_string">Save</string>
-    <string name="route_to">Route To</string>
+    <string name="edit_bike_name">Cykelnavn</string>
+    <string name="edit_bike_device_id">Tracker ID</string>
+    <string name="edit_bike_current_address">Current Address</string>
+    <string name="edit_bike_latlng">Latitude and Longitude</string>
+    <string name="edit_bike_route_to">Route To</string>
+    <string name="edit_bike_save">Save</string>
+    <string name="edit_bike_locate">Locate</string>
+    <string name="edit_bike_ping">Ping</string>
 
-    <string name="back_button">Back</string>
+    <string name="change_bike_button_save">Save</string>
+    <string name="change_bike_title">Edit Bike</string>
+
+    <string name="dialog_pick_ok">Ok</string>
+    <string name="dialog_pick_cancel">Cancel</string>
 </resources>

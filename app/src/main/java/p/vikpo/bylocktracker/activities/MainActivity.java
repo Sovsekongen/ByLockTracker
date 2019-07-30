@@ -1,19 +1,16 @@
 package p.vikpo.bylocktracker.activities;
 
-import android.Manifest;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import p.vikpo.bylocktracker.R;
-import p.vikpo.bylocktracker.fragments.list_fragment;
-import p.vikpo.bylocktracker.fragments.map_fragment;
-import p.vikpo.bylocktracker.fragments.settings_fragment;
+import p.vikpo.bylocktracker.fragments.FragmentList;
+import p.vikpo.bylocktracker.fragments.FragmentMap;
 
 public class MainActivity extends FragmentActivity
 {
@@ -31,16 +28,13 @@ public class MainActivity extends FragmentActivity
             switch (item.getItemId())
             {
                 case R.id.map_bottom_menu:
-                    frag = map_fragment.newInstance();
+                    frag = FragmentMap.newInstance();
                     break;
                 case R.id.control_bottom_menu:
-                    frag = list_fragment.newInstance();
-                    break;
-                case R.id.settings_bottom_menu:
-                    frag = settings_fragment.newInstance();
+                    frag = FragmentList.newInstance();
                     break;
                 default:
-                    frag = map_fragment.newInstance();
+                    frag = FragmentMap.newInstance();
             }
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragmentLayout, frag);
@@ -49,7 +43,7 @@ public class MainActivity extends FragmentActivity
         });
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.fragmentLayout, map_fragment.newInstance());
+        fragmentTransaction.add(R.id.fragmentLayout, FragmentMap.newInstance());
         fragmentTransaction.commit();
 
         botNavView.getMenu().getItem(1).setChecked(true);

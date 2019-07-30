@@ -32,15 +32,26 @@ public class Tracker
         this.batteryPer = bat;
         this.bikeOwner = bikeOwner;
         this.colour = colour;
+        iconId = R.drawable.android_bike;
         id = UUID.randomUUID();
     }
 
-    public Tracker(LatLng latLng, String bikeOwner, String colour)
+    public Tracker(LatLng latLng, String bikeOwner, String colour, int iconId)
     {
         this.latLng = latLng;
         this.bikeOwner = bikeOwner;
         this.colour = colour;
+        this.iconId = iconId;
         id = UUID.randomUUID();
+    }
+
+    public Tracker(Tracker t)
+    {
+        this.latLng = t.latLng;
+        this.bikeOwner = t.bikeOwner;
+        this.colour = t.colour;
+        this.iconId = t.iconId;
+        this.id = UUID.randomUUID();
     }
 
     public int getIconSource()

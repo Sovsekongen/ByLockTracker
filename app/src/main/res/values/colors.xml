@@ -10,4 +10,7 @@
 
     <color name="colorGrayLight">#c7c2c0</color>
     <color name="colorGrayDark">#48696b</color>
+
+    <color name="white">#f0f0f0</color>
+    <color name="iron">#363636</color>
 </resources>

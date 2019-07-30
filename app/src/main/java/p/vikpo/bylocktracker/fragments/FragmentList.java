@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -25,18 +24,17 @@ import p.vikpo.bylocktracker.helpers.Tracker;
 import p.vikpo.bylocktracker.helpers.TrackerAdapter;
 import p.vikpo.bylocktracker.liveData.TrackerList;
 
-public class list_fragment extends ListFragment
+public class FragmentList extends ListFragment
 {
-
     private TrackerAdapter listAdapter;
     private SharedPreferences sharedPref;
     private TrackerList trackerList;
     private Geocoder geoCoder;
 
 
-    public static list_fragment newInstance()
+    public static FragmentList newInstance()
     {
-        return new list_fragment();
+        return new FragmentList();
     }
 
     @Override
@@ -85,7 +83,7 @@ public class list_fragment extends ListFragment
         fab.setOnClickListener(v1 ->
         {
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragmentLayout, addBike_fragment.newInstance());
+            fragmentTransaction.replace(R.id.fragmentLayout, FragmentAddBike.newInstance());
             fragmentTransaction.commit();
         });
 
@@ -99,15 +97,11 @@ public class list_fragment extends ListFragment
 
         geoCoder = new Geocoder(getContext(), Locale.getDefault());
 
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener()
+        getListView().setOnItemClickListener((parent, view1, position, id) ->
         {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                FragmentTransaction fragmentTransaction = list_fragment.this.getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragmentLayout, edit_bike_fragment.newInstance((int) id));
-                fragmentTransaction.commit();
-            }
+            FragmentTransaction fragmentTransaction = FragmentList.this.getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragmentLayout, FragmentEditBike.newInstance((int) id));
+            fragmentTransaction.commit();
         });
     }
 }

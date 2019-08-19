@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -29,14 +30,26 @@ import p.vikpo.bylocktracker.liveData.TrackerList;
 
 public class FragmentMap extends Fragment implements OnMapReadyCallback
 {
+
+    private boolean specLaunch = false;
     public static FragmentMap newInstance()
     {
         return new FragmentMap();
     }
 
+    public static FragmentMap newInstance(int index)
+    {
+        FragmentMap frag = new FragmentMap();
+        Bundle args = new Bundle();
+        args.putInt("title", index);
+        frag.setArguments(args);
+        return frag;
+    }
+
     private GoogleMap googleMap;
     private SharedPreferences sharedPref;
     private TrackerList trackerList;
+    private boolean isLocated = false;
 
     @Override
     public void onCreate(Bundle savedInstance)
@@ -85,6 +98,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map)
     {
+
         googleMap = map;
 
         googleMap.setMinZoomPreference(6.0f);
@@ -96,6 +110,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback
 
         trackerList  = ViewModelProviders.of(this).get(TrackerList.class);
 
+
         final Observer<ArrayList<Tracker>> trackerObserver = trackers ->
         {
             ArrayList<Tracker> mapTrackerList = trackerList.getTrackerList(sharedPref).getValue();
@@ -103,8 +118,20 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback
             {
                 for(Tracker s : mapTrackerList)
                 {
-                    googleMap.addMarker(new MarkerOptions().position(s.getLatLng()).title(s.getBikeOwner()).icon(BitmapDescriptorFactory.defaultMarker(Color.parseColor(s.getColour()))));
+                    float[] hue = new float[3];
+                    Color.colorToHSV(Color.parseColor(s.getColour()), hue);
+                    googleMap.addMarker(new MarkerOptions().position(s.getLatLng()).title(s.getBikeOwner()).icon(BitmapDescriptorFactory.defaultMarker(hue[0])));
                 }
+                if(getArguments() != null)
+                {
+                    if(getArguments().containsKey("title") && !isLocated)
+                    {
+                        int targetIndex = getArguments().getInt("title", -1);
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapTrackerList.get(targetIndex).getLatLng(), 18.0f));
+                        isLocated = true;
+                    }
+                }
+
             }
         };
 

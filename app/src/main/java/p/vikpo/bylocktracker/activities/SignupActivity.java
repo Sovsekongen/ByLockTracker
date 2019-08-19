@@ -1,20 +1,51 @@
 package p.vikpo.bylocktracker.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.PrintStream;
+
 import p.vikpo.bylocktracker.R;
+import p.vikpo.bylocktracker.login.MySingleton;
+import p.vikpo.bylocktracker.login.SessionHandler;
+import p.vikpo.bylocktracker.login.User;
 
 public class SignupActivity extends FragmentActivity
 {
     private static final String TAG = "SignupActivity";
-
+    private ProgressDialog pDialog;
+    private static final String KEY_STATUS = "status";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_FULL_NAME = "Name";
+    private static final String KEY_EMAIL = "Email";
+    private static final String KEY_PASSWORD = "Password";
+    private static final String KEY_EMPTY = "";
+    private String email, password, name;
+    private EditText emailTextView, passwordTextView, nameTextView;
+    private Button signUp;
     private TextView account;
+    private String register_url = "http://192.168.1.50:80/register.php";
+    private SessionHandler session;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -26,25 +57,149 @@ public class SignupActivity extends FragmentActivity
         final Intent launchLogin = new Intent(this, LoginActivity.class);
 
         account = findViewById(R.id.link_login);
+        emailTextView = findViewById(R.id.su_email);
+        passwordTextView = findViewById(R.id.su_pword);
+        nameTextView = findViewById(R.id.su_name);
+        signUp = findViewById(R.id.btn_signup);
 
         account.setOnClickListener(v -> startActivity(launchLogin));
+        signUp.setOnClickListener(v1 ->
+        {
+            loadInputs();
+        });
+    }
+
+    public void loadInputs()
+    {
+        email = emailTextView.getText().toString().toLowerCase().trim();
+        password = passwordTextView.getText().toString().trim();
+        name = nameTextView.getText().toString().trim();
+
+        if(validate())
+        {
+            signup();
+        }
     }
 
     public void signup()
     {
-        Log.d(TAG, "Signup");
-
-        if (!validate())
+        displayLoader();
+        JSONObject request = new JSONObject();
+        try
         {
-            onSignupFailed();
-            return;
+            //Populate the request parameters
+            request.put(KEY_EMAIL, email);
+            request.put(KEY_PASSWORD, password);
+            request.put(KEY_FULL_NAME, name);
+
+            Log.e("bylock", "Request:   " + request.toString());
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+            Log.e("bylock", "error", e);
         }
 
+        JsonObjectRequest jsArrayRequest = new JsonObjectRequest(Request.Method.POST, register_url, request, response ->
+        {
+            pDialog.dismiss();
+
+            try
+            {
+                Log.e("bylock", "Response: " + response.toString());
+
+                if(response.toString().equals("{}"))
+                {
+                    return;
+                }
+                                //Check if user got registered successfully
+                if (response.getInt(KEY_STATUS) == 0)
+                {
+                    //Set the user session
+                    session.loginUser(email, name);
+                    onSignupSuccess();
+
+                }
+                else if(response.getInt(KEY_STATUS)  == 1)
+                {
+                    //Display error message if username is already existsing
+                    emailTextView.setError("Account Already Exists!");
+                    emailTextView.requestFocus();
+                }
+                else
+                {
+                    emailTextView.setError("Bro you fucked up...");
+                }
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+                Log.e("bylock", "error here", e);
+            }
+        },
+                error ->
+                {
+                    pDialog.dismiss();
+
+                    //Display error message whenever an error occurs
+                    Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("bylock", "error here here", error);
+                });
+
+        /*
+        JsonObjectRequest jsArrayRequest = new JsonObjectRequest(Request.Method.POST, register_url, request, response ->
+        {
+            pDialog.dismiss();
+
+            Log.e("bylock", response.toString());
+
+            if(response.toString().equals("{}"))
+            {
+                return;
+            }
+
+            try
+            {
+
+                //Check if user got registered successfully
+                if (response.getInt(KEY_STATUS) == 0)
+                {
+                    //Set the user session
+                    session.loginUser(email, name);
+                    onSignupSuccess();
+
+                }
+                else if(response.getInt(KEY_STATUS)  == 1)
+                {
+                    //Display error message if username is already existsing
+                    emailTextView.setError("Account Already Exists!");
+                    emailTextView.requestFocus();
+                }
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+                Log.e("bylock", "error here", e);
+            }
+        },
+        error ->
+        {
+            pDialog.dismiss();
+
+            //Display error message whenever an error occurs
+            Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("bylock", "error here here", error);
+        });*/
+
+        // Access the RequestQueue through your singleton class.
+        MySingleton.getInstance(this).addToRequestQueue(jsArrayRequest);
     }
 
     public void onSignupSuccess()
     {
+        Intent loginActivity = new Intent(this, LoginActivity.class);
 
+        startActivity(loginActivity);
     }
 
     public void onSignupFailed()
@@ -54,115 +209,34 @@ public class SignupActivity extends FragmentActivity
 
     public boolean validate()
     {
+        if (KEY_EMPTY.equals(name))
+        {
+            nameTextView.setError("Full Name cannot be empty");
+            nameTextView.requestFocus();
+            return false;
 
-        return false;
-    }
-    /*
-    @InjectView(R.id.input_name) EditText _nameText;
-    @InjectView(R.id.input_email) EditText _emailText;
-    @InjectView(R.id.input_password) EditText _passwordText;
-    @InjectView(R.id.btn_signup) Button _signupButton;
-    @InjectView(R.id.link_login) TextView _loginLink;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
-        ButterKnife.inject(this);
-
-        _signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signup();
-            }
-        });
-
-        _loginLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Finish the registration screen and return to the Login activity
-                finish();
-            }
-        });
-    }
-
-    public void signup() {
-        Log.d(TAG, "Signup");
-
-        if (!validate()) {
-            onSignupFailed();
-            return;
         }
-
-        _signupButton.setEnabled(false);
-
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
-        progressDialog.show();
-
-        String name = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-
-        // TODO: Implement your own signup logic here.
-
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
-    }
-
-
-    public void onSignupSuccess() {
-        _signupButton.setEnabled(true);
-        setResult(RESULT_OK, null);
-        finish();
-    }
-
-    public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
-        _signupButton.setEnabled(true);
-    }
-
-    public boolean validate() {
-        boolean valid = true;
-
-        String name = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-
-        if (name.isEmpty() || name.length() < 3) {
-            _nameText.setError("at least 3 characters");
-            valid = false;
-        } else {
-            _nameText.setError(null);
+        if (KEY_EMPTY.equals(email))
+        {
+            emailTextView.setError("Username cannot be empty");
+            emailTextView.requestFocus();
+            return false;
         }
-
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
-            valid = false;
-        } else {
-            _emailText.setError(null);
+        if (KEY_EMPTY.equals(password))
+        {
+            passwordTextView.setError("Password cannot be empty");
+            passwordTextView.requestFocus();
+            return false;
         }
-
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
-            valid = false;
-        } else {
-            _passwordText.setError(null);
-        }
-
-        return valid;
+        return true;
     }
 
-    */
+    private void displayLoader()
+    {
+        pDialog = new ProgressDialog(SignupActivity.this);
+        pDialog.setMessage("Signing Up.. Please wait...");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
+    }
 }

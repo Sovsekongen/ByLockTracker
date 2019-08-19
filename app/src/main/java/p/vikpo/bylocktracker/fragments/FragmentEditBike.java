@@ -1,7 +1,9 @@
 package p.vikpo.bylocktracker.fragments;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -23,9 +25,10 @@ import p.vikpo.bylocktracker.liveData.TrackerList;
 
 public class FragmentEditBike extends Fragment
 {
-    private Button saveButton;
+    private Button saveButton, locateButton, routeTo;
     private TextView addressView, editName, percentageView;
     private ImageView bikeIcon;
+    private Tracker track;
     private int index;
 
     @Override
@@ -51,9 +54,11 @@ public class FragmentEditBike extends Fragment
         index = getArguments().getInt("listNumber");
 
         saveButton = v.findViewById(R.id.save_button);
+        locateButton = v.findViewById(R.id.btn_view_on_map);
         editName = v.findViewById(R.id.edit_name);
         addressView = v.findViewById(R.id.address_view);
         percentageView = v.findViewById(R.id.percentage_view);
+        routeTo = v.findViewById(R.id.route_to_button);
 
         bikeIcon = v.findViewById(R.id.edit_icon);
 
@@ -63,7 +68,7 @@ public class FragmentEditBike extends Fragment
 
         final Observer<ArrayList<Tracker>> trackerObserver = trackers ->
         {
-            Tracker track = trackers.get(index);
+            track = trackers.get(index);
             String percentage = Double.toString(track.getBatteryPer()) + "%";
 
             editName.setText(track.getBikeOwner());
@@ -87,6 +92,19 @@ public class FragmentEditBike extends Fragment
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragmentLayout, FragmentChangeSetting.newInstance(index));
             fragmentTransaction.commit();
+        });
+
+        locateButton.setOnClickListener(v1 ->
+        {
+            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragmentLayout, FragmentMap.newInstance(index));
+            fragmentTransaction.commit();
+        });
+
+        routeTo.setOnClickListener(v1 ->
+        {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=" + track.getLatLng().latitude + "," + track.getLatLng().longitude));
+            startActivity(browserIntent);
         });
 
         return v;

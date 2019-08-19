@@ -3,6 +3,7 @@ package p.vikpo.bylocktracker.fragments;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ import p.vikpo.bylocktracker.R;
 import p.vikpo.bylocktracker.helpers.Tracker;
 import p.vikpo.bylocktracker.liveData.TrackerList;
 
-public class FragmentAddBike extends Fragment implements FragmentDialogList.OnColourPicked
+public class FragmentAddBike extends Fragment implements FragmentDialogList.OnIconPicked, FragmentDialogList.OnColourPicked
 {
     private TextView add_bike_name, add_bike_tracker;
     private Button add_bike_colour, add_bike_icon, add_bike;
@@ -103,10 +104,26 @@ public class FragmentAddBike extends Fragment implements FragmentDialogList.OnCo
 
     private boolean addBike()
     {
-        boolean success;
+        boolean success = false;
         TrackerList trackerList = ViewModelProviders.of(this).get(TrackerList.class);
 
-        success = trackerList.addTracker(new Tracker(new LatLng(55.392007, 10.406941), add_bike_name.getText().toString(), colour, iconID), sharedPref);
+        if(add_bike_tracker.getText().toString().equals("1"))
+        {
+            success = trackerList.addTracker(new Tracker(new LatLng(55.373954, 10.428752), add_bike_name.getText().toString(), colour, iconID), sharedPref);
+        }
+        else if(add_bike_tracker.getText().toString().equals("2"))
+        {
+            success = trackerList.addTracker(new Tracker(new LatLng(55.380723, 10.344780), add_bike_name.getText().toString(), colour, iconID), sharedPref);
+        }
+        else if(add_bike_tracker.getText().toString().equals("3"))
+        {
+            success = trackerList.addTracker(new Tracker(new LatLng(55.408949, 10.383793), add_bike_name.getText().toString(), colour, iconID), sharedPref);
+        }
+        else
+        {
+            Log.e("bylock", add_bike_tracker.getText().toString());
+            success = trackerList.addTracker(new Tracker(new LatLng(55.395716, 10.386282), add_bike_name.getText().toString(), colour, iconID), sharedPref);
+        }
 
         return success;
     }
@@ -117,6 +134,15 @@ public class FragmentAddBike extends Fragment implements FragmentDialogList.OnCo
         if(!colour.equals("null"))
         {
             this.colour = colour;
+        }
+    }
+
+    @Override
+    public void onIconPicked(int id)
+    {
+        if(id != 0)
+        {
+            iconID = id;
         }
     }
 }

@@ -43,16 +43,9 @@ public class FragmentList extends ListFragment
         super.onCreate(savedInstance);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        geoCoder = new Geocoder(getContext());
 
-        trackerList  = ViewModelProviders.of(this).get(TrackerList.class);
-        final Observer<ArrayList<Tracker>> trackerObserver = trackers ->
-        {
-            listAdapter = new TrackerAdapter(getContext(), trackers);
-            getListView().setAdapter(listAdapter);
-            trackerList.updateAddresses(geoCoder, sharedPref);
-        };
-
-        trackerList.getTrackerList(sharedPref).observe(this, trackerObserver);
+        trackerList = ViewModelProviders.of(this).get(TrackerList.class);
     }
 
     @Override
@@ -96,6 +89,18 @@ public class FragmentList extends ListFragment
         super.onViewCreated(view, savedInstanceState);
 
         geoCoder = new Geocoder(getContext(), Locale.getDefault());
+
+        final Observer<ArrayList<Tracker>> trackerObserver = trackers ->
+        {
+            if(trackers != null)
+            {
+                listAdapter = new TrackerAdapter(getContext(), trackers);
+                getListView().setAdapter(listAdapter);
+                trackerList.updateAddresses(geoCoder, sharedPref);
+            }
+        };
+
+        trackerList.getTrackerList(sharedPref).observe(this, trackerObserver);
 
         getListView().setOnItemClickListener((parent, view1, position, id) ->
         {

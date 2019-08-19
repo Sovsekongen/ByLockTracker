@@ -24,6 +24,7 @@ public class TrackerList extends ViewModel
     private ArrayList<Tracker> trackerPrefList;
     private Gson gson = new Gson();
     private Type colType = new TypeToken<ArrayList<Tracker>>(){}.getType();
+    private SharedPreferences sharedPref;
 
     public MutableLiveData<ArrayList<Tracker>> getTrackerList(SharedPreferences sharedPref)
     {
@@ -33,6 +34,7 @@ public class TrackerList extends ViewModel
         }
 
         loadTrackers(sharedPref);
+        //this.sharedPref = sharedPref;
 
         return trackerList;
     }
@@ -41,7 +43,8 @@ public class TrackerList extends ViewModel
     {
         Handler myHandler = new Handler();
 
-        myHandler.postDelayed(() ->{
+        myHandler.postDelayed(() ->
+        {
             if(trackerPrefList == null)
             {
                 trackerPrefList = gson.fromJson(sharedPref.getString("tracker", ""), colType);
@@ -55,6 +58,13 @@ public class TrackerList extends ViewModel
         },200);
     }
 
+    private boolean compareLists()
+    {
+        checkTrackerList(sharedPref);
+
+        return true;
+    }
+
     public boolean addTracker(Tracker tracker, SharedPreferences sharedPref)
     {
         boolean success;
@@ -64,6 +74,8 @@ public class TrackerList extends ViewModel
         SharedPreferences.Editor editor = sharedPref.edit();
 
         editor.putString("tracker", gson.toJson(trackerPrefList));
+
+        //trackerList.setValue(trackerPrefList);
         success = editor.commit();
 
         return success;
@@ -111,7 +123,7 @@ public class TrackerList extends ViewModel
         loadTrackers(sharedPref);
         trackerPrefList = trackerList.getValue();
 
-        if(trackerPrefList != null)
+        if(trackerPrefList != null && trackerPrefList.size() != 0)
         {
             for (Tracker s : trackerPrefList)
             {
@@ -121,14 +133,17 @@ public class TrackerList extends ViewModel
                 try
                 {
                     addresses.addAll(geoCoder.getFromLocation(latLng.latitude, latLng.longitude, 1));
+
+                    if(addresses.get(0).getAddressLine(0) != null)
+                    {
+                        String address = addresses.get(0).getAddressLine(0);
+                        s.setAddress(address);
+                    }
                 }
                 catch (IOException ioe)
                 {
-                    Log.e("byLock", ioe.getMessage());
+                    Log.e("byLock", ioe.getMessage(), ioe);
                 }
-
-                String address = addresses.get(0).getAddressLine(0);
-                s.setAddress(address);
             }
 
             SharedPreferences.Editor editor = sharedPref.edit();

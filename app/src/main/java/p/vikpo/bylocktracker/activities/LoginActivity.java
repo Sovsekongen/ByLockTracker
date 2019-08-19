@@ -14,7 +14,17 @@ import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import p.vikpo.bylocktracker.R;
+import p.vikpo.bylocktracker.login.MySingleton;
+import p.vikpo.bylocktracker.login.SessionHandler;
 
 public class LoginActivity extends FragmentActivity
 {
@@ -22,6 +32,14 @@ public class LoginActivity extends FragmentActivity
     private Button loginButton;
     private EditText emailText, passWordText;
     private TextView noAccount;
+    private static final String KEY_STATUS = "status";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_FULL_NAME = "name";
+    private static final String KEY_EMAIL = "Email";
+    private static final String KEY_PASSWORD = "Password";
+    private static final String KEY_EMPTY = "";
+    private String login_url = "http://192.168.1.50:80/login.php";
+    private SessionHandler session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,11 +56,23 @@ public class LoginActivity extends FragmentActivity
 
         loginButton.setOnClickListener(v -> login());
         noAccount.setOnClickListener(v -> startActivity(launchSignup));
+
+        session = new SessionHandler(this);
+
+        if(session.isLoggedIn())
+        {
+            onLoginSuccess();
+        }
     }
 
     public void login()
     {
-        Log.d("Login", "Login");
+
+        final ProgressDialog pDialog = new ProgressDialog(LoginActivity.this);
+        pDialog.setMessage("Logging In.. Please wait...");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
 
         if (!validate())
         {
@@ -52,50 +82,85 @@ public class LoginActivity extends FragmentActivity
 
         loginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
-
         String email = emailText.getText().toString();
         String password = passWordText.getText().toString();
 
-        // TODO: Implement your own authentication logic here.
-
-        new Handler().postDelayed(() ->
-                {
-                    // On complete call either onLoginSuccess or onLoginFailed
-                    onLoginSuccess();
-                    // onLoginFailed();
-                    progressDialog.dismiss();
-                }, 1000);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_SIGNUP)
+        if(email.equals("") && password.equals(""))
         {
-            if (resultCode == RESULT_OK)
-            {
-
-                // TODO: Implement successful signup logic here
-                // By default we just finish the Activity and log them in automatically
-
-
-                this.finish();
-            }
+            session.loginUser("", "");
+            pDialog.dismiss();
+            onLoginSuccess();
         }
+        else if(email.equals("clear") && password.equals(""))
+        {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+            sharedPref.edit().clear().apply();
+
+            pDialog.dismiss();
+            onLoginSuccess();
+        }
+
+        JSONObject request = new JSONObject();
+        try
+        {
+            //Populate the request parameters
+            request.put(KEY_EMAIL, email);
+            request.put(KEY_PASSWORD, password);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsArrayRequest = new JsonObjectRequest
+                (Request.Method.POST, login_url, request, response ->
+                {
+                    pDialog.dismiss();
+                    try
+                    {
+                        //Check if user got logged in successfully
+                        Log.e("bylock", response.toString() + " " + response.getInt(KEY_STATUS));
+                        if (response.getInt(KEY_STATUS) == 0)
+                        {
+                            Toast.makeText(getApplicationContext(),
+                                    response.getString(KEY_MESSAGE), Toast.LENGTH_SHORT).show();
+
+                            session.loginUser(email, response.getString(KEY_FULL_NAME));
+                            onLoginSuccess();
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(),
+                                    response.getString(KEY_MESSAGE), Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                    catch (JSONException e)
+                    {
+                        Log.e("bylock", "error", e);
+                    }
+                },
+                        error ->
+                {
+                    pDialog.dismiss();
+
+                    //Display error message whenever an error occurs
+                    Toast.makeText(getApplicationContext(),
+                            error.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+
+        // Access the RequestQueue through your singleton class.
+        MySingleton.getInstance(this).addToRequestQueue(jsArrayRequest);
     }
 
     public void onLoginSuccess()
     {
         loginButton.setEnabled(true);
-
         Intent mainIntent = new Intent(this, MainActivity.class);
 
         startActivity(mainIntent);
+        finish();
     }
 
     public void onLoginFailed()
@@ -133,7 +198,7 @@ public class LoginActivity extends FragmentActivity
             emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10)
+        if (password.isEmpty() || password.length() < 4 || password.length() > 18)
         {
             passWordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;

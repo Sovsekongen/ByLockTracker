@@ -44,7 +44,7 @@ public class SignupActivity extends FragmentActivity
     private EditText emailTextView, passwordTextView, nameTextView;
     private Button signUp;
     private TextView account;
-    private String register_url = "http://192.168.1.50:80/register.php";
+    private String register_url = "http://192.168.1.50:80/login/html/register.php";
     private SessionHandler session;
 
     @Override
@@ -92,7 +92,7 @@ public class SignupActivity extends FragmentActivity
             request.put(KEY_PASSWORD, password);
             request.put(KEY_FULL_NAME, name);
 
-            Log.e("bylock", "Request:   " + request.toString());
+            Log.e("bylock", "Request: " + request.toString());
         }
         catch (JSONException e)
         {

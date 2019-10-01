@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Button;
@@ -15,14 +14,13 @@ import android.widget.Toast;
 import androidx.fragment.app.FragmentActivity;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import p.vikpo.bylocktracker.R;
+import p.vikpo.bylocktracker.helpers.WifiHandler;
 import p.vikpo.bylocktracker.login.MySingleton;
 import p.vikpo.bylocktracker.login.SessionHandler;
 
@@ -38,8 +36,9 @@ public class LoginActivity extends FragmentActivity
     private static final String KEY_EMAIL = "Email";
     private static final String KEY_PASSWORD = "Password";
     private static final String KEY_EMPTY = "";
-    private String login_url = "http://192.168.1.50:80/login/html/login.php";
+    private String login_url = "login/html/login.php";
     private SessionHandler session;
+    private WifiHandler wifiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,6 +46,7 @@ public class LoginActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         final Intent launchSignup = new Intent(this, SignupActivity.class);
 
+        wifiHandler = new WifiHandler(this);
         setContentView(R.layout.activity_login);
 
         loginButton = findViewById(R.id.btn_login);
@@ -87,13 +87,7 @@ public class LoginActivity extends FragmentActivity
 
         if(email.equals("") && password.equals(""))
         {
-            session.loginUser("", "");
-            pDialog.dismiss();
-            onLoginSuccess();
-        }
-        else if(email.equals("vikpo@live.dk") && password.equals("12345"))
-        {
-            session.loginUser("vikpo@live.dk", "Viktor Poulsen");
+            session.loginUser("vikpo@live.dk", "");
             pDialog.dismiss();
             onLoginSuccess();
         }
@@ -119,14 +113,12 @@ public class LoginActivity extends FragmentActivity
             e.printStackTrace();
         }
 
-        JsonObjectRequest jsArrayRequest = new JsonObjectRequest
-                (Request.Method.POST, login_url, request, response ->
+        JsonObjectRequest jsArrayRequest = new JsonObjectRequest(Request.Method.POST, wifiHandler.checkWifi() + login_url, request, response ->
                 {
                     pDialog.dismiss();
                     try
                     {
                         //Check if user got logged in successfully
-                        Log.e("bylock", response.toString() + " " + response.getInt(KEY_STATUS));
                         if (response.getInt(KEY_STATUS) == 0)
                         {
                             Toast.makeText(getApplicationContext(),
@@ -139,7 +131,6 @@ public class LoginActivity extends FragmentActivity
                         {
                             Toast.makeText(getApplicationContext(),
                                     response.getString(KEY_MESSAGE), Toast.LENGTH_SHORT).show();
-
                         }
                     }
                     catch (JSONException e)

@@ -21,12 +21,14 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import p.vikpo.bylocktracker.R;
 import p.vikpo.bylocktracker.helpers.Tracker;
+import p.vikpo.bylocktracker.helpers.WifiHandler;
 import p.vikpo.bylocktracker.liveData.TrackerList;
+import p.vikpo.bylocktracker.login.SessionHandler;
 
 public class FragmentEditBike extends Fragment
 {
     private Button saveButton, locateButton, routeTo;
-    private TextView addressView, editName, percentageView;
+    private TextView addressView, editName, percentageView, deviceId;
     private ImageView bikeIcon;
     private Tracker track;
     private int index;
@@ -52,11 +54,13 @@ public class FragmentEditBike extends Fragment
     {
         View v = inflater.inflate(R.layout.fragment_edit_bike, container, false);
         index = getArguments().getInt("listNumber");
+        WifiHandler wifiHandler = new WifiHandler(getContext());
 
         saveButton = v.findViewById(R.id.save_button);
         locateButton = v.findViewById(R.id.btn_view_on_map);
         editName = v.findViewById(R.id.edit_name);
         addressView = v.findViewById(R.id.address_view);
+        deviceId = v.findViewById(R.id.edit_bike_deviceID);
         percentageView = v.findViewById(R.id.percentage_view);
         routeTo = v.findViewById(R.id.route_to_button);
 
@@ -71,23 +75,33 @@ public class FragmentEditBike extends Fragment
             track = trackers.get(index);
             String percentage = Double.toString(track.getBatteryPer()) + "%";
 
-            editName.setText(track.getBikeOwner());
+            editName.setText(track.getTrackerName());
             addressView.setText(track.getAddress());
             percentageView.setText(percentage);
             bikeIcon.setColorFilter(Color.parseColor(track.getColour()));
+            deviceId.setText(track.getDeviceId());
             bikeIcon.setImageResource(track.getIconSource());
         };
 
         saveButton.setOnClickListener(v1 ->
         {
+            Tracker newTrack = new Tracker(track);
+
+            if(!editName.getText().toString().equals(newTrack.getTrackerName()))
+            {
+                newTrack.setTrackerName(editName.getText().toString());
+            }
+
+            trackerList.editTracker(track, newTrack, sharedPref);
+
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragmentLayout, FragmentList.newInstance());
             fragmentTransaction.commit();
         });
 
-        trackerList.getTrackerList(sharedPref).observe(this, trackerObserver);
+        trackerList.getTrackerList(sharedPref, getContext(), new SessionHandler(getContext()).getUserDetails().getEmail(), wifiHandler.checkWifi()).observe(this, trackerObserver);
 
-        bikeIcon.setOnClickListener(v12 ->
+        bikeIcon.setOnClickListener(v1 ->
         {
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragmentLayout, FragmentChangeSetting.newInstance(index));

@@ -109,20 +109,20 @@ public class FragmentAddBike extends Fragment implements FragmentDialogList.OnIc
 
         if(add_bike_tracker.getText().toString().equals("1"))
         {
-            success = trackerList.addTracker(new Tracker(new LatLng(55.373954, 10.428752), add_bike_name.getText().toString(), colour, iconID), sharedPref);
+            success = trackerList.addTracker(new Tracker(new LatLng(55.373954, 10.428752), add_bike_name.getText().toString(), colour, iconID));
         }
         else if(add_bike_tracker.getText().toString().equals("2"))
         {
-            success = trackerList.addTracker(new Tracker(new LatLng(55.380723, 10.344780), add_bike_name.getText().toString(), colour, iconID), sharedPref);
+            success = trackerList.addTracker(new Tracker(new LatLng(55.380723, 10.344780), add_bike_name.getText().toString(), colour, iconID));
         }
         else if(add_bike_tracker.getText().toString().equals("3"))
         {
-            success = trackerList.addTracker(new Tracker(new LatLng(55.408949, 10.383793), add_bike_name.getText().toString(), colour, iconID), sharedPref);
+            success = trackerList.addTracker(new Tracker(new LatLng(55.408949, 10.383793), add_bike_name.getText().toString(), colour, iconID));
         }
         else
         {
             Log.e("bylock", add_bike_tracker.getText().toString());
-            success = trackerList.addTracker(new Tracker(new LatLng(55.395716, 10.386282), add_bike_name.getText().toString(), colour, iconID), sharedPref);
+            success = trackerList.addTracker(new Tracker(new LatLng(55.395716, 10.386282), add_bike_name.getText().toString(), colour, iconID));
         }
 
         return success;

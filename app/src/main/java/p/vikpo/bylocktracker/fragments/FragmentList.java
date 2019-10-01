@@ -1,9 +1,11 @@
 package p.vikpo.bylocktracker.fragments;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +22,12 @@ import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import p.vikpo.bylocktracker.R;
+import p.vikpo.bylocktracker.activities.LoginActivity;
 import p.vikpo.bylocktracker.helpers.Tracker;
 import p.vikpo.bylocktracker.helpers.TrackerAdapter;
+import p.vikpo.bylocktracker.helpers.WifiHandler;
 import p.vikpo.bylocktracker.liveData.TrackerList;
+import p.vikpo.bylocktracker.login.SessionHandler;
 
 public class FragmentList extends ListFragment
 {
@@ -30,6 +35,7 @@ public class FragmentList extends ListFragment
     private SharedPreferences sharedPref;
     private TrackerList trackerList;
     private Geocoder geoCoder;
+    private SessionHandler s;
 
 
     public static FragmentList newInstance()
@@ -43,6 +49,8 @@ public class FragmentList extends ListFragment
         super.onCreate(savedInstance);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        s = new SessionHandler(getContext());
+
         geoCoder = new Geocoder(getContext());
 
         trackerList = ViewModelProviders.of(this).get(TrackerList.class);
@@ -80,6 +88,14 @@ public class FragmentList extends ListFragment
             fragmentTransaction.commit();
         });
 
+        fab.setOnLongClickListener(v12 ->
+        {
+            s.logoutUser();
+            startLogin();
+
+            return false;
+        });
+
         return v;
     }
 
@@ -89,6 +105,7 @@ public class FragmentList extends ListFragment
         super.onViewCreated(view, savedInstanceState);
 
         geoCoder = new Geocoder(getContext(), Locale.getDefault());
+        WifiHandler wifiHandler = new WifiHandler(getContext());
 
         final Observer<ArrayList<Tracker>> trackerObserver = trackers ->
         {
@@ -100,7 +117,7 @@ public class FragmentList extends ListFragment
             }
         };
 
-        trackerList.getTrackerList(sharedPref).observe(this, trackerObserver);
+        trackerList.getTrackerList(sharedPref, getContext(), new SessionHandler(getContext()).getUserDetails().getEmail(), wifiHandler.checkWifi()).observe(this, trackerObserver);
 
         getListView().setOnItemClickListener((parent, view1, position, id) ->
         {
@@ -108,5 +125,10 @@ public class FragmentList extends ListFragment
             fragmentTransaction.replace(R.id.fragmentLayout, FragmentEditBike.newInstance((int) id));
             fragmentTransaction.commit();
         });
+    }
+    private void startLogin()
+    {
+        final Intent mainIntent = new Intent(getContext(), LoginActivity.class);
+        startActivity(mainIntent);
     }
 }

@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import p.vikpo.bylocktracker.R;
@@ -11,29 +12,105 @@ import p.vikpo.bylocktracker.R;
 public class Tracker
 {
     private LatLng latLng;
-    private double batteryPer;
-    private int iconId;
-    private String bikeOwner, colour, address;
-    private UUID id;
+    private double batteryPer, latLocation, longLocation;
+    private int iconId, pin;
+    private String bikeOwner, colour, address, trackerName, deviceId;
+    private Timestamp lastSeen;
 
-    public Tracker()
+    public int getIconId()
     {
-        latLng = new LatLng(55.367913, 10.428155);
-        batteryPer = 100;
-        bikeOwner = "Owner Ownersen";
-        colour = "#48696b";
-        id = UUID.randomUUID();
-        iconId = R.drawable.android_bike;
+        return iconId;
     }
 
-    public Tracker(double lat, double longt, double bat, String bikeOwner, String colour)
+    public void setIconId(int iconId)
     {
-        this.latLng = new LatLng(lat, longt);
-        this.batteryPer = bat;
+        this.iconId = iconId;
+    }
+
+    public int getPin()
+    {
+        return pin;
+    }
+
+    public void setPin(int pin)
+    {
+        this.pin = pin;
+    }
+
+    public String getTrackerName()
+    {
+        return trackerName;
+    }
+
+    public void setTrackerName(String trackerName)
+    {
+        this.trackerName = trackerName;
+    }
+
+    public String getDeviceId()
+    {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId)
+    {
+        this.deviceId = deviceId;
+    }
+
+    public Timestamp getLastSeen()
+    {
+        return lastSeen;
+    }
+
+    public void setLastSeen(Timestamp lastSeen)
+    {
+        this.lastSeen = lastSeen;
+    }
+
+    public Timestamp getActiveDate()
+    {
+        return activeDate;
+    }
+
+    public void setActiveDate(Timestamp activeDate)
+    {
+        this.activeDate = activeDate;
+    }
+
+    private Timestamp activeDate;
+
+    public double getLatLocation()
+    {
+        return latLocation;
+    }
+
+    public void setLatLocation(double latLocation)
+    {
+        this.latLocation = latLocation;
+    }
+
+    public double getLongLocation()
+    {
+        return longLocation;
+    }
+
+    public void setLongLocation(double longLocation)
+    {
+        this.longLocation = longLocation;
+    }
+
+    public Tracker(String id, double longValue, String name, int iconId, String colour, Timestamp lastSeen, String bikeOwner, int pin, double latValue)
+    {
+        this.deviceId = id;
+        this.latLng = new LatLng(longValue, latValue);
+        this.latLocation = latValue;
+        this.longLocation = longValue;
+        this.trackerName = name;
         this.bikeOwner = bikeOwner;
+        this.pin = pin;
+        this.lastSeen = lastSeen;
         this.colour = colour;
-        iconId = R.drawable.android_bike;
-        id = UUID.randomUUID();
+        this.iconId = iconId;
     }
 
     public Tracker(LatLng latLng, String bikeOwner, String colour, int iconId)
@@ -42,7 +119,7 @@ public class Tracker
         this.bikeOwner = bikeOwner;
         this.colour = colour;
         this.iconId = iconId;
-        id = UUID.randomUUID();
+        //id = UUID.randomUUID();
     }
 
     public Tracker(Tracker t)
@@ -51,7 +128,7 @@ public class Tracker
         this.bikeOwner = t.bikeOwner;
         this.colour = t.colour;
         this.iconId = t.iconId;
-        this.id = UUID.randomUUID();
+        //this.id = UUID.randomUUID();
     }
 
     public int getIconSource()
@@ -94,14 +171,14 @@ public class Tracker
         this.bikeOwner = bikeOwner;
     }
 
-    public UUID getId()
+    public String getId()
     {
-        return id;
+        return deviceId;
     }
 
-    public void setId(UUID id)
+    public void setId(String id)
     {
-        this.id = id;
+        this.deviceId = id;
     }
 
     public String getColour()

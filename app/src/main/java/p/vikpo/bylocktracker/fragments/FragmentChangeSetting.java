@@ -21,7 +21,9 @@ import java.util.ArrayList;
 
 import p.vikpo.bylocktracker.R;
 import p.vikpo.bylocktracker.helpers.Tracker;
+import p.vikpo.bylocktracker.helpers.WifiHandler;
 import p.vikpo.bylocktracker.liveData.TrackerList;
+import p.vikpo.bylocktracker.login.SessionHandler;
 
 public class FragmentChangeSetting extends Fragment implements FragmentDialogList.OnColourPicked, FragmentDialogList.OnIconPicked
 {
@@ -45,6 +47,7 @@ public class FragmentChangeSetting extends Fragment implements FragmentDialogLis
         View v = inflater.inflate(R.layout.fragment_change_setting, container, false);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        WifiHandler wifiHandler = new WifiHandler(getContext());
 
         listNum = getArguments().getInt("listNumber");
         change_bike_name = v.findViewById(R.id.change_bike_name);
@@ -87,7 +90,7 @@ public class FragmentChangeSetting extends Fragment implements FragmentDialogLis
             }
         });
 
-        trackerList.getTrackerList(sharedPref).observe(this, trackerObserver);
+        trackerList.getTrackerList(sharedPref, getContext(), new SessionHandler(getContext()).getUserDetails().getEmail(), wifiHandler.checkWifi()).observe(this, trackerObserver);
 
         change_bike_colour.setOnClickListener(v1 -> pickColour());
         change_bike_icon.setOnClickListener(v1 -> pickIcon());

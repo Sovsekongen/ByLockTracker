@@ -25,7 +25,7 @@ public class TrackerAdapter extends ArrayAdapter<Tracker>
     private static class ViewHolder
     {
         private TextView addressView;
-        private TextView ownerName;
+        private TextView trackerName;
         private ImageView emblem;
     }
 
@@ -42,7 +42,7 @@ public class TrackerAdapter extends ArrayAdapter<Tracker>
             convertView = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_list_item, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.ownerName = (TextView) convertView.findViewById(R.id.ownerName);
+            viewHolder.trackerName = (TextView) convertView.findViewById(R.id.ownerName);
             viewHolder.addressView = (TextView) convertView.findViewById(R.id.addressTextView);
             viewHolder.emblem = (ImageView) convertView.findViewById(R.id.picBike);
 
@@ -56,7 +56,7 @@ public class TrackerAdapter extends ArrayAdapter<Tracker>
         Tracker item = getItem(pos);
         if (item!= null)
         {
-            viewHolder.ownerName.setText(String.format("%s", item.getBikeOwner()));
+            viewHolder.trackerName.setText(String.format("%s", item.getTrackerName()));
             viewHolder.addressView.setText(String.format("%s", item.getAddress()));
             if(item.getIconSource() != 0)
             {

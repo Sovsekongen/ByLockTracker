@@ -14,6 +14,8 @@ import p.vikpo.bylocktracker.fragments.FragmentMap;
 
 public class MainActivity extends FragmentActivity
 {
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -47,5 +49,7 @@ public class MainActivity extends FragmentActivity
         fragmentTransaction.commit();
 
         botNavView.getMenu().getItem(1).setChecked(true);
+
+
     }
 }

@@ -26,12 +26,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import p.vikpo.bylocktracker.R;
 import p.vikpo.bylocktracker.helpers.Tracker;
+import p.vikpo.bylocktracker.helpers.WifiHandler;
 import p.vikpo.bylocktracker.liveData.TrackerList;
+import p.vikpo.bylocktracker.login.SessionHandler;
 
 public class FragmentMap extends Fragment implements OnMapReadyCallback
 {
-
-    private boolean specLaunch = false;
     public static FragmentMap newInstance()
     {
         return new FragmentMap();
@@ -98,7 +98,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map)
     {
-
+        WifiHandler wifiHandler = new WifiHandler(getContext());
         googleMap = map;
 
         googleMap.setMinZoomPreference(6.0f);
@@ -113,21 +113,21 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback
 
         final Observer<ArrayList<Tracker>> trackerObserver = trackers ->
         {
-            ArrayList<Tracker> mapTrackerList = trackerList.getTrackerList(sharedPref).getValue();
+            ArrayList<Tracker> mapTrackerList = trackerList.getTrackerList(sharedPref, getContext(), new SessionHandler(getContext()).getUserDetails().getEmail(), wifiHandler.checkWifi()).getValue();
             if(mapTrackerList != null)
             {
                 for(Tracker s : mapTrackerList)
                 {
                     float[] hue = new float[3];
                     Color.colorToHSV(Color.parseColor(s.getColour()), hue);
-                    googleMap.addMarker(new MarkerOptions().position(s.getLatLng()).title(s.getBikeOwner()).icon(BitmapDescriptorFactory.defaultMarker(hue[0])));
+                    googleMap.addMarker(new MarkerOptions().position(new LatLng(s.getLatLocation(), s.getLongLocation())).title(s.getBikeOwner()).icon(BitmapDescriptorFactory.defaultMarker(hue[0])));
                 }
                 if(getArguments() != null)
                 {
                     if(getArguments().containsKey("title") && !isLocated)
                     {
                         int targetIndex = getArguments().getInt("title", -1);
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapTrackerList.get(targetIndex).getLatLng(), 18.0f));
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mapTrackerList.get(targetIndex).getLatLocation(), mapTrackerList.get(targetIndex).getLongLocation()), 18.0f));
                         isLocated = true;
                     }
                 }
@@ -135,6 +135,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback
             }
         };
 
-        trackerList.getTrackerList(sharedPref).observe(this, trackerObserver);
+        trackerList.getTrackerList(sharedPref, getContext(), new SessionHandler(getContext()).getUserDetails().getEmail(), wifiHandler.checkWifi()).observe(this, trackerObserver);
     }
 }
